@@ -337,9 +337,11 @@ d = 30
 g = 500
 p = 30
 times = 50
-table = np.zeros((5, 23))
-table[2, :] = -np.ones(23)*np.inf
-table[3, :] = np.ones(23)*np.inf
+table = np.zeros((5, 23)) # ['avg', 'time', 'worst', 'best', 'std']
+table[2, :] = -np.ones(23)*np.inf # worst
+table[3, :] = np.ones(23)*np.inf # best
+all_for_std = np.zeros((times, 23))
+all_for_loss = np.zeros((g, 23))
 ALL = np.zeros((times, 23))
 for i in range(times):
     x_max = 100*np.ones(d)
@@ -353,21 +355,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 0]: table[3, 0] = optimizer.gBest_score
     table[0, 0] += optimizer.gBest_score
     table[1, 0] += end - start 
-    ALL[i, 0] = optimizer.gBest_score
-
-
-    x_max = 100*np.ones(d)
-    x_min = -100*np.ones(d)
-    optimizer = PSO(fit_func=Sphere,
-                    num_dim=d, num_particle=p, max_iter=g, x_max=x_max, x_min=x_min)
-    start = time.time()
-    optimizer.opt()
-    end = time.time()
-    if optimizer.gBest_score>table[2, 0]: table[2, 0] = optimizer.gBest_score
-    if optimizer.gBest_score<table[3, 0]: table[3, 0] = optimizer.gBest_score
-    table[0, 0] += optimizer.gBest_score
-    table[1, 0] += end - start 
-    ALL[i, 0] = optimizer.gBest_score
+    all_for_std[i, 0] = optimizer.gBest_score
+    all_for_loss[:, 0] += optimizer.gBest_curve
 
 
     x_max = 10*np.ones(d)
@@ -381,7 +370,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 1]: table[3, 1] = optimizer.gBest_score
     table[0, 1] += optimizer.gBest_score
     table[1, 1] += end - start  
-    ALL[i, 1] = optimizer.gBest_score
+    all_for_std[i, 1] = optimizer.gBest_score
+    all_for_loss[:, 1] += optimizer.gBest_curve
 
     
     x_max = 100*np.ones(d)
@@ -395,7 +385,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 2]: table[3, 2] = optimizer.gBest_score
     table[0, 2] += optimizer.gBest_score
     table[1, 2] += end - start
-    ALL[i, 2] = optimizer.gBest_score
+    all_for_std[i, 2] = optimizer.gBest_score
+    all_for_loss[:, 2] += optimizer.gBest_curve
 
     x_max = 100*np.ones(d)
     x_min = -100*np.ones(d)
@@ -408,7 +399,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 3]: table[3, 3] = optimizer.gBest_score  
     table[0, 3] += optimizer.gBest_score
     table[1, 3] += end - start  
-    ALL[i, 3] = optimizer.gBest_score  
+    all_for_std[i, 3] = optimizer.gBest_score
+    all_for_loss[:, 3] += optimizer.gBest_curve
  
     x_max = 30*np.ones(d)
     x_min = -30*np.ones(d)
@@ -421,7 +413,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 4]: table[3, 4] = optimizer.gBest_score  
     table[0, 4] += optimizer.gBest_score
     table[1, 4] += end - start  
-    ALL[i, 4] = optimizer.gBest_score    
+    all_for_std[i, 4] = optimizer.gBest_score
+    all_for_loss[:, 4] += optimizer.gBest_curve
 
    
     x_max = 100*np.ones(d)
@@ -435,7 +428,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 5]: table[3, 5] = optimizer.gBest_score  
     table[0, 5] += optimizer.gBest_score
     table[1, 5] += end - start
-    ALL[i, 5] = optimizer.gBest_score
+    all_for_std[i, 5] = optimizer.gBest_score
+    all_for_loss[:, 5] += optimizer.gBest_curve
   
   
     x_max = 1.28*np.ones(d)
@@ -449,7 +443,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 6]: table[3, 6] = optimizer.gBest_score   
     table[0, 6] += optimizer.gBest_score
     table[1, 6] += end - start
-    ALL[i, 6] = optimizer.gBest_score
+    all_for_std[i, 6] = optimizer.gBest_score
+    all_for_loss[:, 6] += optimizer.gBest_curve
  
  
     x_max = 500*np.ones(d)
@@ -463,7 +458,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 7]: table[3, 7] = optimizer.gBest_score   
     table[0, 7] += optimizer.gBest_score
     table[1, 7] += end - start
-    ALL[i, 7] = optimizer.gBest_score
+    all_for_std[i, 7] = optimizer.gBest_score
+    all_for_loss[:, 7] += optimizer.gBest_curve
   
 
     x_max = 5.12*np.ones(d)
@@ -477,7 +473,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 8]: table[3, 8] = optimizer.gBest_score   
     table[0, 8] += optimizer.gBest_score
     table[1, 8] += end - start  
-    ALL[i, 8] = optimizer.gBest_score  
+    all_for_std[i, 8] = optimizer.gBest_score
+    all_for_loss[:, 8] += optimizer.gBest_curve 
  
     x_max = 32*np.ones(d)
     x_min = -32*np.ones(d)
@@ -490,7 +487,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 9]: table[3, 9] = optimizer.gBest_score  
     table[0, 9] += optimizer.gBest_score
     table[1, 9] += end - start
-    ALL[i, 9] = optimizer.gBest_score
+    all_for_std[i, 9] = optimizer.gBest_score
+    all_for_loss[:, 9] += optimizer.gBest_curve
    
  
     x_max = 600*np.ones(d)
@@ -504,7 +502,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 10]: table[3, 10] = optimizer.gBest_score  
     table[0, 10] += optimizer.gBest_score
     table[1, 10] += end - start  
-    ALL[i, 10] = optimizer.gBest_score
+    all_for_std[i, 10] = optimizer.gBest_score
+    all_for_loss[:, 10] += optimizer.gBest_curve
 
     x_max = 50*np.ones(d)
     x_min = -50*np.ones(d)
@@ -517,7 +516,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 11]: table[3, 11] = optimizer.gBest_score  
     table[0, 11] += optimizer.gBest_score
     table[1, 11] += end - start  
-    ALL[i, 11] = optimizer.gBest_score
+    all_for_std[i, 11] = optimizer.gBest_score
+    all_for_loss[:, 11] += optimizer.gBest_curve
     
     x_max = 50*np.ones(d)
     x_min = -50*np.ones(d)
@@ -530,7 +530,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 12]: table[3, 12] = optimizer.gBest_score  
     table[0, 12] += optimizer.gBest_score
     table[1, 12] += end - start  
-    ALL[i, 12] = optimizer.gBest_score
+    all_for_std[i, 12] = optimizer.gBest_score
+    all_for_loss[:, 12] += optimizer.gBest_curve
     
     x_max = 65.536*np.ones(2)
     x_min = -65.536*np.ones(2)
@@ -543,7 +544,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 13]: table[3, 13] = optimizer.gBest_score  
     table[0, 13] += optimizer.gBest_score
     table[1, 13] += end - start  
-    ALL[i, 13] = optimizer.gBest_score
+    all_for_std[i, 13] = optimizer.gBest_score
+    all_for_loss[:, 13] += optimizer.gBest_curve
     
     x_max = 5*np.ones(4)
     x_min = -5*np.ones(4)
@@ -556,7 +558,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 14]: table[3, 14] = optimizer.gBest_score  
     table[0, 14] += optimizer.gBest_score
     table[1, 14] += end - start  
-    ALL[i, 14] = optimizer.gBest_score
+    all_for_std[i, 14] = optimizer.gBest_score
+    all_for_loss[:, 14] += optimizer.gBest_curve
     
     x_max = 5*np.ones(2)
     x_min = -5*np.ones(2)
@@ -569,7 +572,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 15]: table[3, 15] = optimizer.gBest_score  
     table[0, 15] += optimizer.gBest_score
     table[1, 15] += end - start  
-    ALL[i, 15] = optimizer.gBest_score
+    all_for_std[i, 15] = optimizer.gBest_score
+    all_for_loss[:, 15] += optimizer.gBest_curve
     
     x_max = 5*np.ones(2)
     x_min = -5*np.ones(2)
@@ -582,7 +586,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 16]: table[3, 16] = optimizer.gBest_score  
     table[0, 16] += optimizer.gBest_score
     table[1, 16] += end - start  
-    ALL[i, 16] = optimizer.gBest_score
+    all_for_std[i, 16] = optimizer.gBest_score
+    all_for_loss[:, 16] += optimizer.gBest_curve
     
     x_max = 2*np.ones(2)
     x_min = -2*np.ones(2)
@@ -595,7 +600,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 17]: table[3, 17] = optimizer.gBest_score  
     table[0, 17] += optimizer.gBest_score
     table[1, 17] += end - start  
-    ALL[i, 17] = optimizer.gBest_score
+    all_for_std[i, 17] = optimizer.gBest_score
+    all_for_loss[:, 17] += optimizer.gBest_curve
     
     x_max = 1*np.ones(3)
     x_min = 0*np.ones(3)
@@ -608,7 +614,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 18]: table[3, 18] = optimizer.gBest_score  
     table[0, 18] += optimizer.gBest_score
     table[1, 18] += end - start  
-    ALL[i, 18] = optimizer.gBest_score
+    all_for_std[i, 18] = optimizer.gBest_score
+    all_for_loss[:, 18] += optimizer.gBest_curve
     
     x_max = 1*np.ones(6)
     x_min = 0*np.ones(6)
@@ -621,7 +628,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 19]: table[3, 19] = optimizer.gBest_score  
     table[0, 19] += optimizer.gBest_score
     table[1, 19] += end - start  
-    ALL[i, 19] = optimizer.gBest_score
+    all_for_std[i, 19] = optimizer.gBest_score
+    all_for_loss[:, 19] += optimizer.gBest_curve
     
     x_max = 10*np.ones(4)
     x_min = 0*np.ones(4)
@@ -634,7 +642,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 20]: table[3, 20] = optimizer.gBest_score  
     table[0, 20] += optimizer.gBest_score
     table[1, 20] += end - start  
-    ALL[i, 20] = optimizer.gBest_score
+    all_for_std[i, 20] = optimizer.gBest_score
+    all_for_loss[:, 20] += optimizer.gBest_curve
     
     x_max = 10*np.ones(4)
     x_min = 0*np.ones(4)
@@ -647,7 +656,8 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 21]: table[3, 21] = optimizer.gBest_score  
     table[0, 21] += optimizer.gBest_score
     table[1, 21] += end - start  
-    ALL[i, 21] = optimizer.gBest_score
+    all_for_std[i, 21] = optimizer.gBest_score
+    all_for_loss[:, 21] += optimizer.gBest_curve
     
     x_max = 10*np.ones(4)
     x_min = 0*np.ones(4)
@@ -660,16 +670,29 @@ for i in range(times):
     if optimizer.gBest_score<table[3, 22]: table[3, 22] = optimizer.gBest_score  
     table[0, 22] += optimizer.gBest_score
     table[1, 22] += end - start  
-    ALL[i, 22] = optimizer.gBest_score
+    all_for_std[i, 22] = optimizer.gBest_score
+    all_for_loss[:, 22] += optimizer.gBest_curve
     
     print(i+1)
     
     
 table[:2, :] = table[:2, :] / times
-table[4, :] = np.std(ALL, axis=0)
+table[4, :] = np.std(all_for_std, axis=0)
 table = pd.DataFrame(table)
 table.columns=['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 
                 'F8', 'F9', 'F10', 'F11', 'F12', 
                 'F13', 'F14', 'F15', 'F16', 'F17', 'F18',
                 'F19', 'F20', 'F21', 'F22', 'F23']
 table.index = ['avg', 'time', 'worst', 'best', 'std']
+
+
+all_for_loss = all_for_loss / times
+all_for_loss = pd.DataFrame(all_for_loss)
+all_for_loss.columns=['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 
+                      'F8', 'F9', 'F10', 'F11', 'F12', 
+                      'F13', 'F14', 'F15', 'F16', 'F17', 'F18',
+                      'F19', 'F20', 'F21', 'F22', 'F23']
+ax = all_for_loss.plot(kind='line', grid=True, legend=True, logy=True)
+ax.set_title('WOA')
+ax.set_xlabel('iteration')
+ax.set_ylabel('fitness value')
