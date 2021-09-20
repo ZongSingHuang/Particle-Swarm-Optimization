@@ -9,63 +9,61 @@ import matplotlib.pyplot as plt
 np.random.seed(42)
 
 class PSO():
-    def __init__(self, fit_func, num_dim, num_particle=20, max_iter=500,
-                 x_max=1, x_min=-1, w_max=0.9, w_min=0.4, c1=2.0, c2=2.0, k=0.2):
-        self.fit_func = fit_func        
-        self.num_dim = num_dim
-        self.num_particle = num_particle
-        self.max_iter = max_iter
-
-        self.x_max = x_max
-        self.x_min = x_min
-        self.w = w_max        
+    def __init__(self, fitness, D=30, P=20, G=500, ub=1, lb=0,
+                 w_max=0.9, w_min=0.4, c1=2.0, c2=2.0, k=0.2):
+        self.fitness = fitness
+        self.D = D
+        self.P = P
+        self.G = G
+        self.ub = ub*np.ones([self.P, self.D])
+        self.lb = lb*np.ones([self.P, self.D])
         self.w_max = w_max
         self.w_min = w_min
         self.c1 = c1
         self.c2 = c2
         self.k = k
-        self._iter = 1
-        self.gBest_curve = np.zeros(self.max_iter)
-
-        self.X = np.random.uniform(low=self.x_min, high=self.x_max,
-                                   size=[self.num_particle, self.num_dim])
-        self.V = np.zeros(shape=[self.num_particle, self.num_dim])
-        self.v_max = self.k*(self.x_max-self.x_min)
-
-
-        self.pBest_X = self.X.copy()
-        self.pBest_score = self.fit_func(self.X)
-        self.gBest_X = self.pBest_X[self.pBest_score.argmin()]
-        self.gBest_score = self.pBest_score.min()
-        self.gBest_curve[0] = self.gBest_score.copy()
+        self.v_max = self.k*(self.ub-self.lb)
+        
+        self.pbest_X = np.zeros([self.P, self.D])
+        self.pbest_F = np.zeros([self.P]) + np.inf
+        self.gbest_X = np.zeros([self.D])
+        self.gbest_F = np.inf
+        self.loss_curve = np.zeros(self.G)
 
     def opt(self):
-        while(self._iter<self.max_iter):   
-            R1 = np.random.uniform(size=(self.num_particle, self.num_dim))
-            R2 = np.random.uniform(size=(self.num_particle, self.num_dim))
-            w = self.w_max - self._iter*(self.w_max-self.w_min)/self.max_iter
-            for i in range(self.num_particle):                
-                self.V[i, :] = w * self.V[i, :] \
-                        + self.c1 * (self.pBest_X[i, :] - self.X[i, :]) * R1[i, :] \
-                        + self.c2 * (self.gBest_X - self.X[i, :]) * R2[i, :]               
-                self.V[i, self.v_max < self.V[i, :]] = self.v_max[self.v_max < self.V[i, :]]
-                self.V[i, -self.v_max > self.V[i, :]] = -self.v_max[-self.v_max > self.V[i, :]]
-                
-                self.X[i, :] = self.X[i, :] + self.V[i, :]
-                self.X[i, self.x_max < self.X[i, :]] = self.x_max[self.x_max < self.X[i, :]]
-                self.X[i, self.x_min > self.X[i, :]] = self.x_min[self.x_min > self.X[i, :]]
-                
+        # 初始化
+        self.X = np.random.uniform(low=self.lb, high=self.ub, size=[self.P, self.D])
+        self.V = np.zeros([self.P, self.D])
         
-                score = self.fit_func(self.X[i, :])
-                if score<self.pBest_score[i]:
-                    self.pBest_score[i] = score.copy()
-                    self.pBest_X[i, :] = self.X[i, :].copy()
-                    if score<self.gBest_score:
-                        self.gBest_score = score.copy()
-                        self.gBest_X = self.X[i, :].copy()
-
-            self.gBest_curve[self._iter] = self.gBest_score.copy()         
-            self._iter = self._iter + 1 
+        # 迭代
+        for g in range(self.G):
+            # 適應值計算
+            F = self.fitness(self.X)
+            
+            # 更新最佳解
+            mask = F < self.pbest_F
+            self.pbest_X[mask] = self.X[mask].copy()
+            self.pbest_F[mask] = F[mask].copy()
+            
+            if np.min(F) < self.gbest_F:
+                idx = F.argmin()
+                self.gbest_X = self.X[idx].copy()
+                self.gbest_F = F.min()
+            
+            # 收斂曲線
+            self.loss_curve[g] = self.gbest_F
+            
+            # 更新
+            r1 = np.random.uniform(size=[self.P, self.D])
+            r2 = np.random.uniform(size=[self.P, self.D])
+            w = self.w_max - (self.w_max-self.w_min)*(g/self.G)
+            
+            self.V = w * self.V + self.c1 * (self.pbest_X - self.X) * r1 \
+                                + self.c2 * (self.gbest_X - self.X) * r2 # 更新V
+            self.V = np.clip(self.V, -self.v_max, self.v_max) # 邊界處理
+            
+            self.X = self.X + self.V # 更新X
+            self.X = np.clip(self.X, self.lb, self.ub) # 邊界處理
 
     def plot_curve(self):
         plt.figure()
@@ -73,4 +71,4 @@ class PSO():
         plt.plot(self.gBest_curve, label='loss')
         plt.grid()
         plt.legend()
-        plt.show()    
+        plt.show()
