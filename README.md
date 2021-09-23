@@ -1,7 +1,7 @@
 # Particle-Swarm-Optimization
-Marini, F., &amp; Walczak, B. (2015). Particle swarm optimization (PSO). A tutorial. Chemometrics and Intelligent Laboratory Systems, 149, 153–165. doi:10.1016/j.chemolab.2015.08.020
+F. Marini and B. Walczak, "Particle swarm optimization (PSO). A tutorial", Chemometrics and Intelligent Laboratory Systems, vol. 149, pp. 153-165, 2015.
 
-https://www.sciencedirect.com/science/article/abs/pii/S0169743915002117
+https://doi.org/10.1016/j.chemolab.2015.08.020
 
 1. 重新優化了測試腳本
 
