@@ -1,13 +1,11 @@
 import numpy as np
 import plotly.graph_objects as go
 
-from pso import pso
+from benchmark import Benchmark
+from PSO import pso
 
-
-def sphere(X: np.array) -> float:
-    return np.sum(X**2, axis=1)
-
-
+benchmark = Benchmark()
+sphere = benchmark.Sphere()
 name = "Sphere"
 times = 30
 curves = list()
@@ -25,7 +23,7 @@ for _ in range(times):
         lb=-100 * np.ones(30),
         ub=100 * np.ones(30),
         name=name,
-        benchmark=sphere,
+        benchmark=sphere.evaluate,
     )
     solver.run()
     curves.append(solver.curve)
