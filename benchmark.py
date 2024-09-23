@@ -2,8 +2,50 @@ import numpy as np
 
 
 class Benchmark:
-    def __init__(self):
-        pass
+    def __init__(self, model_name: str):
+        match model_name:
+            case "Sphere":
+                self.model = self.Sphere()
+            case "Schwefel_P222":
+                self.model = self.Schwefel_P222()
+            case "Schwefel_P221":
+                self.model = self.Schwefel_P221()
+            case "Rosenbrock":
+                self.model = self.Rosenbrock()
+            case "Step":
+                self.model = self.Step()
+            case "Quartic":
+                self.model = self.Quartic()
+            case "Schwefel_226":
+                self.model = self.Schwefel_226()
+            case "Rastrigin":
+                self.model = self.Rastrigin()
+            case "Ackley":
+                self.model = self.Ackley()
+            case "Griewank":
+                self.model = self.Griewank()
+            case "Penalized1":
+                self.model = self.Penalized1()
+            case "Penalized2":
+                self.model = self.Penalized2()
+            case "ShekelFoxholes":
+                self.model = self.ShekelFoxholes()
+            case "Kowalik":
+                self.model = self.Kowalik()
+            case "SixHumpCamelBack":
+                self.model = self.SixHumpCamelBack()
+            case "Branin":
+                self.model = self.Branin()
+            case "GoldsteinPrice":
+                self.model = self.GoldsteinPrice()
+            case "Hartmann3":
+                self.model = self.Hartmann3()
+            case "Hartmann6":
+                self.model = self.Hartmann6()
+            case "Shekel":
+                self.model = self.Shekel()
+            case _:
+                return None
 
     class Sphere:
         def __init__(self, dim: int = 30, lb: float = -100.0, ub: float = 100.0):
@@ -27,20 +69,9 @@ class Benchmark:
         def evaluate(self, X: np.array) -> np.array:
             return np.sum(np.abs(X), axis=1) + np.prod(np.abs(X), axis=1)
 
-    class f3:
+    class Schwefel_P221:
         def __init__(self, dim: int = 30, lb: float = -100.0, ub: float = 100.0):
-            self.name = "f3"
-            self.lb = np.full(dim, lb)
-            self.ub = np.full(dim, ub)
-            self.opt_f = 0
-            self.opt_x = np.full(dim, 0)
-
-        def evaluate(self, X: np.array) -> np.array:
-            return np.max(np.abs(X), axis=1)
-
-    class Sehwwefel_P221:
-        def __init__(self, dim: int = 30, lb: float = -100.0, ub: float = 100.0):
-            self.name = "Sehwwefel_P221"
+            self.name = "Schwefel_P221"
             self.lb = np.full(dim, lb)
             self.ub = np.full(dim, ub)
             self.opt_f = 0

@@ -1,45 +1,72 @@
 import numpy as np
 import plotly.graph_objects as go
+from addict import Dict
 
 from benchmark import Benchmark
 from PSO import pso
 
-benchmark = Benchmark()
-sphere = benchmark.Sphere()
-name = "Sphere"
 times = 30
-curves = list()
-costs = list()
-gbest_fs = list()
+grades = Dict()
 for _ in range(times):
-    solver = pso(
-        max_iter=500,
-        pop_size=30,
-        k=0.2,
-        w_max=0.9,
-        w_min=0.4,
-        c1=2.0,
-        c2=2.0,
-        lb=-100 * np.ones(30),
-        ub=100 * np.ones(30),
-        name=name,
-        benchmark=sphere.evaluate,
-    )
-    solver.run()
-    curves.append(solver.curve)
-    costs.append(solver.cost)
-    gbest_fs.append(solver.gbest_f)
+    for model_name in [
+        "Sphere",
+        "Schwefel_P222",
+        "Schwefel_P221",
+        "Rosenbrock",
+        "Step",
+        "Quartic",
+        "Schwefel_226",
+        "Rastrigin",
+        "Ackley",
+        "Griewank",
+        "Penalized1",
+        "Penalized2",
+        "ShekelFoxholes",
+        "Kowalik",
+        "SixHumpCamelBack",
+        "Branin",
+        "GoldsteinPrice",
+        "Hartmann3",
+        "Hartmann6",
+        # "Shekel",
+    ]:
+        model = Benchmark(model_name=model_name)
+        solver = pso(
+            max_iter=500,
+            pop_size=30,
+            k=0.2,
+            w_max=0.9,
+            w_min=0.4,
+            c1=2.0,
+            c2=2.0,
+            lb=model.model.lb,
+            ub=model.model.ub,
+            name=model_name,
+            benchmark=model.model.evaluate,
+        )
+        solver.run()
+        if not grades[model_name]:
+            grades[model_name] = {
+                "curves": [solver.curve],
+                "costs": [solver.cost],
+                "gbest_fs": [solver.gbest_f],
+            }
+        else:
+            grades[model_name]["curves"].append(solver.curve)
+            grades[model_name]["costs"].append(solver.cost)
+            grades[model_name]["gbest_fs"].append(solver.gbest_f)
+        print(model_name)
 
 # 創建 Figure
 fig = go.Figure()
 
 # 添加數據列到 Figure
-for curve in curves:
+for curve in grades["Sphere"]["curves"]:
     fig.add_trace(go.Scatter(y=curve, mode="lines+markers"))
 
 # 設置圖表標題及坐標軸標籤
 fig.update_layout(
-    title=f"{name}(f_worst: {max(gbest_fs):.2f}, f_avg: {np.mean(gbest_fs):.2f}, f_best: {min(gbest_fs):.2f},  avg cost: {np.mean(costs):.2f} sec)",
+    title=f"{"Sphere"}(f_worst: {max(grades["Sphere"]["gbest_fs"]):.2f}, f_avg: {np.mean(grades["Sphere"]["gbest_fs"]):.2f}, f_best: {min(grades["Sphere"]["gbest_fs"]):.2f},  avg cost: {np.mean(grades["Sphere"]["costs"]):.2f} sec)",
     xaxis_title="Iteration",
     yaxis_title="Fitness",
 )
