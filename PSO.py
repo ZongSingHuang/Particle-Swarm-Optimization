@@ -37,7 +37,7 @@ class pso:
         self.curve = list()
         self.gbest_f = np.inf
         self.gbest_x = np.zeros(self.dim)
-        self.pbest_F = np.full(self.dim, np.inf)
+        self.pbest_F = np.full(self.pop_size, np.inf)
         self.pbest_X = np.zeros([self.pop_size, self.dim])
 
     def run(self):
