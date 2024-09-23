@@ -427,7 +427,7 @@ class Benchmark:
 
     class Shekel5:
         def __init__(self, dim: int = 4, lb: float = 0.0, ub: float = 10.0):
-            self.name = "Shekel"
+            self.name = "Shekel5"
             self.lb = np.full(4, lb)
             self.ub = np.full(4, ub)
             self.opt_f = -10.1532
@@ -454,7 +454,7 @@ class Benchmark:
 
     class Shekel7:
         def __init__(self, dim: int = 4, lb: float = 0.0, ub: float = 10.0):
-            self.name = "Shekel"
+            self.name = "Shekel7"
             self.lb = np.full(4, lb)
             self.ub = np.full(4, ub)
             self.opt_f = -10.4029
