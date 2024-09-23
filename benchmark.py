@@ -42,8 +42,12 @@ class Benchmark:
                 self.model = self.Hartmann3()
             case "Hartmann6":
                 self.model = self.Hartmann6()
-            case "Shekel":
-                self.model = self.Shekel()
+            case "Shekel5":
+                self.model = self.Shekel5()
+            case "Shekel7":
+                self.model = self.Shekel7()
+            case "Shekel10":
+                self.model = self.Shekel10()
             case _:
                 return None
 
@@ -421,21 +425,68 @@ class Benchmark:
                 F = F + f1
             return -F
 
-    class Shekel:
-        def __init__(self, dim: int = 4, lb: float = 0.0, ub: float = 10.0, m: int = 5):
+    class Shekel5:
+        def __init__(self, dim: int = 4, lb: float = 0.0, ub: float = 10.0):
             self.name = "Shekel"
             self.lb = np.full(4, lb)
             self.ub = np.full(4, ub)
-            match m:
-                case 5:
-                    self.opt_f = -10.1532
-                case 7:
-                    self.opt_f = -10.4029
-                case 10:
-                    self.opt_f = -10.5364
-                case _:
-                    raise ValueError("m 只能輸入 5, 7, 10")
+            self.opt_f = -10.1532
             self.opt_x = np.array([4, 4, 4, 4])
+            self.m = 5
+
+        def evaluate(self, X: np.array) -> np.array:
+            P = X.shape[0]
+            F = np.zeros([P])
+            a = np.array(
+                [
+                    [4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0],
+                    [4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6],
+                    [4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0],
+                    [4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6],
+                ]
+            )
+            c = 0.1 * np.array([1, 2, 2, 4, 4, 6, 3, 7, 5, 5])
+
+            for i in range(self.m):
+                f1 = np.sum((X - a[:, i]) ** 2, axis=1) + c[i]
+                F = F + 1 / f1
+            return -F
+
+    class Shekel7:
+        def __init__(self, dim: int = 4, lb: float = 0.0, ub: float = 10.0):
+            self.name = "Shekel"
+            self.lb = np.full(4, lb)
+            self.ub = np.full(4, ub)
+            self.opt_f = -10.4029
+            self.opt_x = np.array([4, 4, 4, 4])
+            self.m = 7
+
+        def evaluate(self, X: np.array) -> np.array:
+            P = X.shape[0]
+            F = np.zeros([P])
+            a = np.array(
+                [
+                    [4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0],
+                    [4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6],
+                    [4.0, 1.0, 8.0, 6.0, 3.0, 2.0, 5.0, 8.0, 6.0, 7.0],
+                    [4.0, 1.0, 8.0, 6.0, 7.0, 9.0, 3.0, 1.0, 2.0, 3.6],
+                ]
+            )
+            c = 0.1 * np.array([1, 2, 2, 4, 4, 6, 3, 7, 5, 5])
+
+            for i in range(self.m):
+                f1 = np.sum((X - a[:, i]) ** 2, axis=1) + c[i]
+                F = F + 1 / f1
+            return -F
+
+    class Shekel10:
+        def __init__(self, dim: int = 4, lb: float = 0.0, ub: float = 10.0):
+            self.name = "Shekel10"
+            self.lb = np.full(4, lb)
+            self.ub = np.full(4, ub)
+            self.opt_f = -10.5364
+            self.opt_x = np.array([4, 4, 4, 4])
+            self.m = 10
 
         def evaluate(self, X: np.array) -> np.array:
             P = X.shape[0]

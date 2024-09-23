@@ -28,7 +28,9 @@ for _ in range(times):
         "GoldsteinPrice",
         "Hartmann3",
         "Hartmann6",
-        # "Shekel",
+        "Shekel5",
+        "Shekel7",
+        "Shekel10",
     ]:
         model = Benchmark(model_name=model_name)
         solver = pso(
@@ -50,6 +52,7 @@ for _ in range(times):
                 "curves": [solver.curve],
                 "costs": [solver.cost],
                 "gbest_fs": [solver.gbest_f],
+                "opt_f": [model.model.opt_f],
             }
         else:
             grades[model_name]["curves"].append(solver.curve)
@@ -66,7 +69,7 @@ for curve in grades["Sphere"]["curves"]:
 
 # 設置圖表標題及坐標軸標籤
 fig.update_layout(
-    title=f"{"Sphere"}(f_worst: {max(grades["Sphere"]["gbest_fs"]):.2f}, f_avg: {np.mean(grades["Sphere"]["gbest_fs"]):.2f}, f_best: {min(grades["Sphere"]["gbest_fs"]):.2f},  avg cost: {np.mean(grades["Sphere"]["costs"]):.2f} sec)",
+    title=f"{"Sphere"}(f_opt: {min(grades["Sphere"]["opt_f"]):.2f}, f_best: {min(grades["Sphere"]["gbest_fs"]):.2f}, f_avg: {np.mean(grades["Sphere"]["gbest_fs"]):.2f}, f_worst: {max(grades["Sphere"]["gbest_fs"]):.2f},  avg cost: {np.mean(grades["Sphere"]["costs"]):.2f} sec)",
     xaxis_title="Iteration",
     yaxis_title="Fitness",
 )
